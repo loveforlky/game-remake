@@ -48,7 +48,7 @@
   const SQUASH_MAX       = 0.30;
 
   const TAU = Math.PI * 2;
-  const BUILD = '20261106d';
+  const BUILD = '20261106e';
   const WEBP_OK = (function () {
     try {
       const c = document.createElement('canvas');
@@ -840,9 +840,18 @@
     const img = it.img;
     if (!img) return;
 
-    /* 圆形裁片（webp 已裁成「圆内照片 + 圆外透明」）：
-       按覆盖圆画进去，照片占满整个球 */
-    c.drawImage(img, -r, -r, r * 2, r * 2);
+    if (it.crop === 'circle') {
+      /* 内嵌 JPEG / 方形照片：裁成圆再画，脸占满整个球 */
+      c.save();
+      c.beginPath();
+      c.arc(0, 0, r * 0.995, 0, TAU);
+      c.clip();
+      c.drawImage(img, -r, -r, r * 2, r * 2);
+      c.restore();
+    } else {
+      /* 预裁好的圆形透明贴图：直接铺满 */
+      c.drawImage(img, -r, -r, r * 2, r * 2);
+    }
 
     /* 一圈淡描边，让球边缘更清晰 */
     c.lineWidth = Math.max(1.2, r * 0.03);
@@ -1196,6 +1205,7 @@
 
   function withBuild(url) {
     if (!url) return url;
+    if (url.indexOf('data:') === 0) return url;
     return url + (url.indexOf('?') >= 0 ? '&' : '?') + 'v=' + BUILD;
   }
 
@@ -1263,7 +1273,7 @@
       overEmojiEl.innerHTML = '<img src="' + top.src + '" alt="">';
       if (reviveEmojiEl) reviveEmojiEl.textContent = '💫';
       const icon = document.querySelector('link[rel="icon"]');
-      if (icon) icon.href = top.src;
+      if (icon && top.src.indexOf('data:') !== 0) icon.href = top.src;
     } else {
       overEmojiEl.textContent = CONFIG.emoji;
     }
