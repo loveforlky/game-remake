@@ -1,0 +1,28 @@
+# ---------- 开发用，分享/部署时不需要 ----------
+# 测试脚本（CDP 驱动浏览器用的）
+test*.py
+test_*.py
+
+# 生成的预览截图（部署时删掉，避免把大 png 传到仓库）
+preview.png
+fresh-preview.png
+fill-preview.png
+verify-*.png
+peek-*.png
+
+# 原始素材（已经处理成 webp 了，原图不用进仓库）
+微信图片_*.png
+
+# 浏览器测试用的临时 profile
+.edge-profile/
+
+# Python 字节码
+__pycache__/
+*.pyc
+
+# 系统 / 编辑器杂项
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
