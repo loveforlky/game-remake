@@ -48,7 +48,7 @@
   const SQUASH_MAX       = 0.30;
 
   const TAU = Math.PI * 2;
-  const BUILD = '20261106c';
+  const BUILD = '20261106d';
   const WEBP_OK = (function () {
     try {
       const c = document.createElement('canvas');
@@ -1529,6 +1529,8 @@
     $('gameTitle').textContent = CONFIG.title;
     $('gameSubtitle').textContent = CONFIG.subtitle;
     document.title = CONFIG.title;
+    const buildTag = $('buildTag');
+    if (buildTag) buildTag.textContent = 'v' + BUILD;
     $('chainCount').textContent = TIERS.length + ' 级';
     $('chainNote').innerHTML = '✨ 两个' + TIERS[MAX_TIER].name +
       '撞在一起会一起炸掉，换 <strong>' + MAX_BONUS + ' 分</strong> + <strong>一枚复活币</strong>';

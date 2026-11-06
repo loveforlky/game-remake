@@ -151,6 +151,20 @@ body::after {
 
 .stage:active { cursor: grabbing; }
 
+/* 版本角标：只用来确认手机加载的是哪一版，不挡操作 */
+.build-tag {
+  position: absolute;
+  left: 12px;
+  bottom: 9px;
+  z-index: 3;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  color: rgba(120, 84, 54, .42);
+  pointer-events: none;
+  user-select: none;
+}
+
 /* 复活币 */
 .coin-chip {
   position: absolute;
@@ -173,8 +187,7 @@ body::after {
   pointer-events: none;
 }
 .coin-ico { font-size: 11px; color: #a96800; }
-.coin-chip.pop { animation: coinPop .5s cubic-bezier(.2, .9, .3, 1.5); }
-@keyframes coinPop {
+.coin-chip.pop { animation: coinPop .5s cubic-bezier(.2, .9, .3, 1.5); }@keyframes coinPop {
   0% { transform: scale(1); }
   45% { transform: scale(1.24); box-shadow: 0 8px 22px rgba(205, 135, 0, .55); }
   100% { transform: scale(1); }
