@@ -48,6 +48,16 @@
   const SQUASH_MAX       = 0.30;
 
   const TAU = Math.PI * 2;
+  const BUILD = '20261106c';
+  const WEBP_OK = (function () {
+    try {
+      const c = document.createElement('canvas');
+      c.width = 1; c.height = 1;
+      return c.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+    } catch (e) {
+      return false;
+    }
+  })();
   const BEST_KEY = 'hecheng.best.v1';
   const MUTE_KEY = 'hecheng.mute.v1';
   const LB_KEY   = 'hecheng.board.v1';
@@ -101,6 +111,7 @@
           c1: (a && a.c1) || p[0],
           c2: (a && a.c2) || p[1],
           file: a.file,
+          fallback: (a && a.fallback) || null,
           crop: a.crop || null
         };
       });
@@ -121,6 +132,7 @@
         c1: a.c1 || p[0],
         c2: a.c2 || p[1],
         file: a.file || null,
+        fallback: a.fallback || null,
         crop: a.crop || null
       });
     }
@@ -1182,6 +1194,11 @@
     if (it.crop === 'none' && box) it.trim = box;
   }
 
+  function withBuild(url) {
+    if (!url) return url;
+    return url + (url.indexOf('?') >= 0 ? '&' : '?') + 'v=' + BUILD;
+  }
+
   function loadAssets() {
     let pending = 0;
 
@@ -1191,22 +1208,46 @@
         return;
       }
       pending++;
-      const img = new Image();
-      img.decoding = 'async';
-      img.onload = () => {
-        it.img = img;
-        it.src = it.file;
-        inspectImage(it, img);
-        if (--pending === 0) refreshAll();
-      };
-      img.onerror = () => {
-        it.img = null;
-        if (window.console) console.warn('[hecheng] 图片载入失败，已用占位形象：' + it.file);
-        if (--pending === 0) refreshAll();
-      };
-      img.src = it.file;
+
+      const tried = [];
+      function attempt(url) {
+        tried.push(url);
+        const img = new Image();
+        img.decoding = 'async';
+
+        img.onload = () => {
+          it.img = img;
+          it.src = withBuild(url);
+          inspectImage(it, img);
+          if (--pending === 0) refreshAll();
+        };
+
+        img.onerror = () => {
+          /* 先试另一种格式（WebP 不被支持时用 PNG），再试同格式的另一个地址 */
+          const next = [it.file, it.fallback].filter(
+            (u) => u && tried.indexOf(u) < 0
+          )[0];
+          if (next) {
+            attempt(next);
+            return;
+          }
+          it.img = null;
+          if (window.console) {
+            console.warn('[hecheng] 图片载入失败，已用占位形象：' + url);
+          }
+          if (--pending === 0) refreshAll();
+        };
+
+        img.src = withBuild(url);
+      }
+
+      attempt((!WEBP_OK && it.fallback) ? it.fallback : it.file);
     });
 
+    if (window.console) {
+      console.log('[hecheng] build ' + BUILD + ' · assets ' + ASSETS.length +
+        ' · webp ' + (WEBP_OK ? 'yes' : 'no'));
+    }
     return pending;
   }
 

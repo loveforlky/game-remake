@@ -153,7 +153,11 @@ def main() -> None:
         light, deep = dominant_colors(tile)
         idx = len(entries) + 1
         filename = f"{idx:02d}.webp"
+        pngname = f"{idx:02d}.png"
         tile.save(out / filename, "WEBP", quality=args.quality, method=6)
+        tile.resize((min(384, args.size), min(384, args.size)), Image.LANCZOS).save(
+            out / pngname, "PNG", optimize=True
+        )
 
         if i < len(names):
             name = names[i]
@@ -163,6 +167,7 @@ def main() -> None:
         entries.append({
             "name": name,
             "file": f"assets/items/{filename}",
+            "fallback": f"assets/items/{pngname}",
             "crop": crop,
             "c1": light,
             "c2": deep,
@@ -181,10 +186,10 @@ def main() -> None:
     ]
     for e in entries:
         lines.append(
-            "  { name: %s, file: %s, crop: %s, c1: %s, c2: %s },"
+            "  { name: %s, file: %s, fallback: %s, crop: %s, c1: %s, c2: %s },"
             % tuple(
                 "'" + str(e[k]).replace("'", "\\'") + "'"
-                for k in ("name", "file", "crop", "c1", "c2")
+                for k in ("name", "file", "fallback", "crop", "c1", "c2")
             )
         )
     lines.append("];")

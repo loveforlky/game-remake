@@ -36,7 +36,7 @@ out = os.path.join(ROOT, 'assets', 'items')
 os.makedirs(out, exist_ok=True)
 # 清理旧的 webp
 for old in os.listdir(out):
-    if old.endswith('.webp'):
+    if old.endswith('.webp') or old.endswith('.png'):
         os.remove(os.path.join(out, old))
 
 def circle_bake(im, size=512):
@@ -81,12 +81,15 @@ for i, code in enumerate(ORDER, start=1):
     tile = circle_bake(im, 512)
     light, deep = dominant_colors(tile)
     fname = '{:02d}.webp'.format(i)
+    pname = '{:02d}.png'.format(i)
     tile.save(os.path.join(out, fname), 'WEBP', quality=92, method=6)
+    tile.resize((384, 384), Image.LANCZOS).save(
+        os.path.join(out, pname), 'PNG', optimize=True)
     manifest_entries.append(
-        "  { name: '形态 %s', file: 'assets/items/%s', crop: 'none', c1: '%s', c2: '%s' },"
-        % (code, fname, light, deep)
+        "  { name: '形态 %s', file: 'assets/items/%s', fallback: 'assets/items/%s', crop: 'none', c1: '%s', c2: '%s' },"
+        % (code, fname, pname, light, deep)
     )
-    print('saved', fname, light, deep)
+    print('saved', fname, pname, light, deep)
 
 lines = [
     '/* 形象清单：从最小到最大，全部圆形裁切真人照片。',
