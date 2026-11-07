@@ -72,13 +72,13 @@ css = (ROOT / "style.css").read_text(encoding="utf-8")
 game = (ROOT / "game.js").read_text(encoding="utf-8")
 
 game = game.replace("const BUILD = '20261106e';", "const BUILD = '20261107a';")
-game = game.replace("title:    '合成大作战'", "title:    '合成大作战 · 新篇'")
+game = game.replace("title:    '合成大作战'", "title:    '合成小啊伟'")
 game = game.replace("subtitle: '相同的撞在一起，越合越大'", "subtitle: '换了一批新面孔，相同的撞在一起'")
 
 html = re.sub(r'<link rel="stylesheet" href="style\.css[^"]*">', "<style>\n" + css + "\n</style>", html)
 html = re.sub(r'<script src="assets/items/embedded\.js[^"]*"></script>', "<script>\n" + embedded + "\n</script>", html)
 html = re.sub(r'<script src="game\.js[^"]*"></script>', "<script>\n" + game + "\n</script>", html)
-html = html.replace("<title>合成大作战 · 内嵌版</title>", "<title>合成大作战 · 新篇</title>")
+html = html.replace("<title>合成大作战 · 内嵌版</title>", "<title>合成小啊伟</title>")
 
 OUT.mkdir(exist_ok=True)
 (OUT / "index.html").write_text(html, encoding="utf-8")
