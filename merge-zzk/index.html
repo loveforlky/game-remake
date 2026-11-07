@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#fff6ea">
+<meta name="color-scheme" content="light">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="description" content="合成大作战 · 纯前端合成小游戏：拖动瞄准、松手投放，相同的撞在一起合成更大的一个。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CradialGradient id='g' cx='35%25' cy='30%25'%3E%3Cstop offset='0' stop-color='%23ffd0c4'/%3E%3Cstop offset='1' stop-color='%23ff6b5e'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='28' fill='url(%23g)'/%3E%3Ccircle cx='23' cy='29' r='4' fill='%23342620'/%3E%3Ccircle cx='41' cy='29' r='4' fill='%23342620'/%3E%3Cpath d='M24 40q8 7 16 0' stroke='%23342620' stroke-width='3.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<title>合成大作战 · 内嵌版</title>
+<link rel="stylesheet" href="../style.css?v=20261106e">
+</head>
+<body>
+
+<main class="app">
+
+  <!-- ============ 棋盘 ============ -->
+  <section class="stage" id="stage" aria-label="游戏棋盘">
+    <canvas id="game" aria-label="合成游戏区域"></canvas>
+
+    <div class="build-tag" id="buildTag" aria-hidden="true"></div>
+
+    <div class="coin-chip" id="coinChip" hidden aria-live="polite">
+      <span class="coin-ico" aria-hidden="true">🪙</span><span id="coinCount">×0</span>
+    </div>
+
+    <div class="overlay" id="overlay">
+      <div class="dialog" role="dialog" aria-modal="true">
+
+        <!-- 复活确认 -->
+        <div id="revivePanel" hidden>
+          <div class="dialog-emoji" id="reviveEmoji">💫</div>
+          <h2>还能再救一下</h2>
+          <p class="dialog-score">本局得分 <strong id="reviveScore">0</strong></p>
+          <p class="revive-hint">清掉警戒线以上挤着的方块，接着玩</p>
+          <div class="dialog-actions">
+            <button class="btn" id="giveUpBtn" type="button">不了，结算吧</button>
+            <button class="btn btn-revive" id="reviveBtn" type="button"><span class="ico">🪙</span> 用一枚复活币</button>
+          </div>
+          <p class="dialog-hint" id="reviveLeft">还剩 1 枚</p>
+        </div>
+
+        <!-- 结算 -->
+        <div id="overPanel">
+          <div class="dialog-emoji" id="overEmoji">✨</div>
+          <h2>游戏结束</h2>
+          <p class="dialog-score">本局得分 <strong id="finalScore">0</strong></p>
+          <p class="dialog-best">最高分 <span id="finalBest">0</span></p>
+
+          <div class="result-box">
+            <p class="result-rank" id="resultRank">正在记账…</p>
+            <p class="my-name">昵称：<strong id="myNameLabel">匿名玩家</strong>
+              <button class="link-btn" id="editNameBtn" type="button">改昵称</button>
+            </p>
+          </div>
+
+          <div class="dialog-actions">
+            <button class="btn" id="boardBtn2" type="button"><span class="ico">🏆</span> 排行榜</button>
+            <button class="btn btn-primary" id="restartBtn" type="button"><span class="ico">↻</span> 再来一局</button>
+          </div>
+          <p class="dialog-hint">按 R 键也可以重新开始</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 侧面板 ============ -->
+  <aside class="panel">
+    <header class="panel-head">
+      <p class="kicker">MERGE · 轻量合成</p>
+      <h1 id="gameTitle">合成大作战</h1>
+      <p class="subtitle" id="gameSubtitle">相同的撞在一起，越合越大</p>
+    </header>
+
+    <div class="stats">
+      <div class="stat">
+        <span class="stat-label">分数</span>
+        <strong class="stat-value" id="score">0</strong>
+      </div>
+      <div class="stat stat-best">
+        <span class="stat-label">最高分</span>
+        <strong class="stat-value" id="best">0</strong>
+      </div>
+    </div>
+
+    <div class="card next-card">
+      <div class="card-text">
+        <span class="card-label">下一个</span>
+        <p class="card-sub">投放前先看一眼</p>
+      </div>
+      <canvas id="next" width="200" height="200" aria-label="下一个方块"></canvas>
+    </div>
+
+    <div class="card chain-card">
+      <div class="card-head">
+        <span class="card-label">合成表</span>
+        <span class="card-sub" id="chainCount"></span>
+      </div>
+      <canvas id="chain" width="720" height="118" aria-label="合成顺序"></canvas>
+      <p class="chain-note" id="chainNote">✨ 两个最大的方块撞在一起会一起炸掉，换 <strong>500 分</strong> + <strong>一枚复活币</strong></p>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-wide" id="boardBtn" type="button">
+        <span class="ico">🏆</span><span class="lbl">排行榜</span>
+      </button>
+      <button class="btn" id="soundBtn" type="button" aria-pressed="true">
+        <span class="ico">🔊</span><span class="lbl">音效开</span>
+      </button>
+      <button class="btn btn-primary" id="resetBtn" type="button" title="重新开始">
+        <span class="ico">↻</span><span class="lbl">重开</span>
+      </button>
+    </div>
+
+    <p class="tips" id="tips">
+      鼠标：移动瞄准、点击投放；触屏：拖动瞄准、松手投放。<br>
+      ← → 微调，空格投放，R 重开。<br>
+      每 <strong>2000 分</strong>攒一枚<strong>复活币</strong>，只在本局有效。
+    </p>
+
+    <p class="local-note">纯前端 · 离线可玩 · 成绩只存在这台设备</p>
+  </aside>
+</main>
+
+<!-- ============ 排行榜 ============ -->
+<div class="modal" id="boardModal" aria-hidden="true" role="dialog" aria-label="排行榜">
+  <div class="modal-card">
+    <header class="modal-head">
+      <h2>🏆 本地高手榜</h2>
+      <button class="icon-btn" id="boardClose" type="button" aria-label="关闭">✕</button>
+    </header>
+    <div class="nick-row">
+      <label class="nick-label" for="nickInput">我的昵称</label>
+      <input class="nick-input" id="nickInput" type="text" maxlength="12" placeholder="匿名玩家" autocomplete="nickname" enterkeyhint="done">
+    </div>
+    <div class="board-list" id="boardList"></div>
+    <footer class="modal-foot">
+      <span class="board-note">只留最近 20 条成绩，存在本地浏览器里</span>
+      <button class="btn" id="boardRefresh" type="button">刷新</button>
+    </footer>
+  </div>
+</div>
+
+<script src="../assets/items/embedded.js?v=20261106e"></script>
+<script src="../game.js?v=20261106e"></script>
+</body>
+</html>
+
