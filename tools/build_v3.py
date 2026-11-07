@@ -1,10 +1,10 @@
-import base64, io, os, re
+﻿import base64, io, os, re
 from pathlib import Path
 from PIL import Image
 
 ROOT = Path(r"C:\Users\Lenovo\Desktop\hecheng")
 SRC = ROOT / "new"
-OUT = ROOT / "v3"
+OUT = ROOT / "merge-lw"
 SIZE = 384
 
 # 自然排序（242, 243, ..., 252）
@@ -83,3 +83,4 @@ html = html.replace("<title>合成大作战 · 内嵌版</title>", "<title>合�
 OUT.mkdir(exist_ok=True)
 (OUT / "index.html").write_text(html, encoding="utf-8")
 print("written", OUT / "index.html", (OUT / "index.html").stat().st_size // 1024, "KB")
+
