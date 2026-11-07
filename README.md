@@ -9,7 +9,7 @@
 
 ## 在线玩
 
-**<https://loveforlky.github.io/merge-zzk/>**
+**<https://loveforlky.github.io/game-remake/>**
 
 已经部署在 GitHub Pages 上，手机 / 电脑浏览器打开即玩，不用安装任何东西。
 
@@ -29,11 +29,11 @@ python -m http.server 8000
 
 这个项目是纯静态的（HTML + CSS + JS + 图片），所以丢到 GitHub Pages 上，别人拿到链接就能玩，不需要装任何东西。
 
-本仓库已经部署在 <https://loveforlky.github.io/merge-zzk/>。下面是从零部署的通用步骤：
+本仓库已经部署在 <https://loveforlky.github.io/game-remake/>。下面是从零部署的通用步骤：
 
 ### 步骤
 
-1. 在 GitHub 上新建一个仓库，比如叫 `merge-zzk`
+1. 在 GitHub 上新建一个仓库，比如叫 `game-remake`
 2. 在本目录执行：
 
    ```bash
@@ -41,12 +41,12 @@ python -m http.server 8000
    git add .
    git commit -m "合成大作战"
    git branch -M main
-   git remote add origin https://github.com/你的用户名/merge-zzk.git
+   git remote add origin https://github.com/你的用户名/game-remake.git
    git push -u origin main
    ```
 
 3. 进仓库的 **Settings → Pages**，把 **Source** 设成 `Deploy from a branch`，分支选 `main`，目录选 `/ (root)`，保存
-4. 等一两分钟，访问 `https://你的用户名.github.io/merge-zzk/` 就能玩
+4. 等一两分钟，访问 `https://你的用户名.github.io/game-remake/` 就能玩
 
 > 在国内访问 GitHub Pages 偶尔会卡，如果打不开，可以让对方在浏览器里打开，或者把整个文件夹打包发过去（方案 C）。
 
