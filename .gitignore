@@ -27,3 +27,7 @@ Thumbs.db
 .vscode/
 .idea/
 final-preview.png
+
+new/
+dist/
+*.zip

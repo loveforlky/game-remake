@@ -848,17 +848,23 @@
       c.clip();
       c.drawImage(img, -r, -r, r * 2, r * 2);
       c.restore();
-    } else {
-      /* 预裁好的圆形透明贴图：直接铺满 */
-      c.drawImage(img, -r, -r, r * 2, r * 2);
+
+      /* 一圈淡描边，让球边缘更清晰 */
+      c.lineWidth = Math.max(1.2, r * 0.03);
+      c.strokeStyle = 'rgba(90, 60, 30, .16)';
+      c.beginPath();
+      c.arc(0, 0, r, 0, TAU);
+      c.stroke();
+      return;
     }
 
-    /* 一圈淡描边，让球边缘更清晰 */
-    c.lineWidth = Math.max(1.2, r * 0.03);
-    c.strokeStyle = 'rgba(90, 60, 30, .16)';
-    c.beginPath();
-    c.arc(0, 0, r, 0, TAU);
-    c.stroke();
+    /* 透明大头贴：直接画脸，加一点投影，不画空心圆环 */
+    c.save();
+    c.shadowColor = 'rgba(120, 80, 40, .30)';
+    c.shadowBlur = Math.max(4, r * 0.18);
+    c.shadowOffsetY = Math.max(1, r * 0.06);
+    c.drawImage(img, -r, -r, r * 2, r * 2);
+    c.restore();
   }
 
   function drawOrb(c, it, r) {
