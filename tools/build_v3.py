@@ -60,7 +60,7 @@ for p in files:
     c1, c2 = colors(tile)
     code = key(p)
     entries.append(
-        "  { name: '形态 %s', file: '%s', crop: 'none', c1: '%s', c2: '%s' },"
+        "  { name: '形态 %s', file: '%s', crop: 'faceball', c1: '%s', c2: '%s' },"
         % (code, uri, c1, c2)
     )
     print("item", code, "png KB", len(buf.getvalue()) // 1024, c1, c2)

@@ -840,6 +840,38 @@
     const img = it.img;
     if (!img) return;
 
+    if (it.crop === 'faceball') {
+      /* 透明大头贴：先画一个可见的圆底，再让脸铺在圆里。
+         这样碰撞圆就是肉眼看到的球边界，不会“隔空撞”。 */
+      c.save();
+      c.shadowColor = 'rgba(120, 80, 40, .28)';
+      c.shadowBlur = Math.max(5, r * 0.20);
+      c.shadowOffsetY = Math.max(1, r * 0.07);
+      const disc = c.createRadialGradient(-r * 0.30, -r * 0.36, r * 0.10, 0, 0, r * 1.02);
+      disc.addColorStop(0, 'rgba(255, 253, 247, .96)');
+      disc.addColorStop(0.72, 'rgba(255, 244, 228, .90)');
+      disc.addColorStop(1, 'rgba(255, 226, 190, .86)');
+      c.beginPath();
+      c.arc(0, 0, r * 0.99, 0, TAU);
+      c.fillStyle = disc;
+      c.fill();
+      c.restore();
+
+      c.save();
+      c.beginPath();
+      c.arc(0, 0, r * 0.99, 0, TAU);
+      c.clip();
+      c.drawImage(img, -r, -r, r * 2, r * 2);
+      c.restore();
+
+      c.lineWidth = Math.max(1.2, r * 0.035);
+      c.strokeStyle = 'rgba(255, 255, 255, .82)';
+      c.beginPath();
+      c.arc(0, 0, r - c.lineWidth * 0.5, 0, TAU);
+      c.stroke();
+      return;
+    }
+
     if (it.crop === 'circle') {
       /* 内嵌 JPEG / 方形照片：裁成圆再画，脸占满整个球 */
       c.save();
